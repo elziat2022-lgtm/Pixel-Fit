@@ -1,0 +1,6 @@
+{
+  "name": "PIXEL FIT - رفيق التغذية الذكي",
+  "description": "منصة التغذية واللياقة التفاعلية الذكية مع حاسبة السعرات، موسوعة الأكل المصري، نظام التحديات والشارات، ومساعد الذكاء الاصطناعي.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

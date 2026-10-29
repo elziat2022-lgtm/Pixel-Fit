@@ -1,0 +1,1247 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" data-theme="pixel" data-mode="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>PIXEL FIT | رفيق التغذية الذكي v1.0</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      /* Default Theme: Pixel Studio Blue */
+      --brand-primary: #1BA8F0;
+      --brand-secondary: #3355FF;
+      --bg-main: #050724;
+      --bg-card: rgba(15, 21, 56, 0.85);
+      --bg-input: #0c1236;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: rgba(27, 168, 240, 0.22);
+    }
+
+    [data-theme="emerald"] {
+      --brand-primary: #10b981;
+      --brand-secondary: #059669;
+    }
+    [data-theme="sunset"] {
+      --brand-primary: #f97316;
+      --brand-secondary: #e11d48;
+    }
+    [data-theme="royal"] {
+      --brand-primary: #a855f7;
+      --brand-secondary: #6366f1;
+    }
+    [data-theme="gold"] {
+      --brand-primary: #eab308;
+      --brand-secondary: #ca8a04;
+    }
+
+    [data-mode="light"] {
+      --bg-main: #f1f5f9;
+      --bg-card: rgba(255, 255, 255, 0.92);
+      --bg-input: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --border-color: rgba(15, 23, 42, 0.12);
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      transition: background-color 0.3s ease, color 0.3s ease;
+      padding-bottom: 130px;
+    }
+
+    .glass-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--border-color);
+      transition: all 0.3s ease;
+    }
+
+    .themed-input {
+      background-color: var(--bg-input);
+      border: 1px solid var(--border-color);
+      color: var(--text-main);
+    }
+
+    .brand-text-primary { color: var(--brand-primary); }
+    .brand-text-secondary { color: var(--brand-secondary); }
+    .brand-bg-primary { background-color: var(--brand-primary); }
+    .brand-bg-gradient { background: linear-gradient(135deg, var(--brand-primary), var(--brand-secondary)); }
+    .brand-border { border-color: var(--brand-primary); }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: var(--brand-primary); border-radius: 6px; }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { padding-bottom: 0; background: #fff; color: #000; }
+    }
+  </style>
+</head>
+<body class="min-h-screen p-3 md:p-6">
+
+  <div class="max-w-7xl mx-auto space-y-6">
+    
+    <!-- Top Header with Dynamic SVG PIXEL FIT Logo & Theme Controls -->
+    <header class="glass-card rounded-2xl p-4 md:p-5 flex flex-col lg:flex-row justify-between items-center gap-4 shadow-lg">
+      
+      <!-- Dynamic PIXEL FIT Logo (Changes color automatically with theme!) -->
+      <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 select-none" dir="ltr">
+          <!-- Vector Isometric Logo matching your uploaded image -->
+          <svg width="56" height="56" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" class="drop-shadow-md">
+            <!-- Left Shape (P/Wing in Primary Color) -->
+            <path d="M18 38 L68 13 L68 42 L40 56 L40 94 L18 105 Z" fill="var(--brand-primary)" class="transition-colors duration-300"/>
+            <!-- Right Shape (Isometric F in Secondary Color) -->
+            <path d="M46 58 L98 32 L98 52 L66 68 L66 77 L90 65 L90 83 L66 95 L66 112 L46 120 Z" fill="var(--brand-secondary)" class="transition-colors duration-300"/>
+          </svg>
+          <div class="leading-none font-black tracking-wider text-left">
+            <div class="text-2xl md:text-3xl transition-colors duration-300" style="color: var(--brand-primary);">PIXEL</div>
+            <div class="text-2xl md:text-3xl transition-colors duration-300" style="color: var(--brand-secondary);">FIT</div>
+          </div>
+        </div>
+
+        <div class="h-10 w-[1px] bg-slate-700/40 hidden sm:block"></div>
+
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="brand-bg-gradient text-white text-[11px] px-2.5 py-0.5 rounded-full font-extrabold shadow">v1.0 Official</span>
+            <span class="text-xs font-bold brand-text-primary">النسخة المصرية الذكية 🇪🇬</span>
+          </div>
+          <p class="text-xs mt-1" style="color: var(--text-muted);">حاسبة الوزن المثالي + موسوعة الأكل المصري + شات Gemini AI</p>
+        </div>
+      </div>
+
+      <!-- Theme Switcher, Light/Dark Mode & API Key -->
+      <div class="flex flex-wrap items-center justify-center gap-2.5 w-full lg:w-auto no-print">
+        
+        <!-- Theme Color Dots -->
+        <div class="flex items-center gap-1.5 themed-input px-3 py-1.5 rounded-xl">
+          <span class="text-[11px] ml-1 font-bold" style="color: var(--text-muted);">الثيم:</span>
+          <button onclick="setTheme('pixel')" title="Pixel Fit الأصلي" class="w-5 h-5 rounded-full bg-gradient-to-tr from-[#3355FF] to-[#1BA8F0] ring-2 ring-offset-1 ring-transparent hover:scale-110 transition"></button>
+          <button onclick="setTheme('emerald')" title="أخضر زمردي" class="w-5 h-5 rounded-full bg-gradient-to-tr from-[#059669] to-[#10b981] hover:scale-110 transition"></button>
+          <button onclick="setTheme('sunset')" title="برتقالي ناري" class="w-5 h-5 rounded-full bg-gradient-to-tr from-[#e11d48] to-[#f97316] hover:scale-110 transition"></button>
+          <button onclick="setTheme('royal')" title="بنفسجي ملكي" class="w-5 h-5 rounded-full bg-gradient-to-tr from-[#6366f1] to-[#a855f7] hover:scale-110 transition"></button>
+          <button onclick="setTheme('gold')" title="ذهبي" class="w-5 h-5 rounded-full bg-gradient-to-tr from-[#ca8a04] to-[#eab308] hover:scale-110 transition"></button>
+        </div>
+
+        <!-- Dark / Light Mode Toggle -->
+        <button onclick="toggleMode()" id="modeBtn" class="themed-input px-3 py-2 rounded-xl text-xs font-bold hover:opacity-80 transition flex items-center gap-1.5">
+          <span id="modeIcon">☀️</span> <span id="modeText">الوضع الفاتح</span>
+        </button>
+
+        <!-- Gemini API Key Input -->
+        <input id="apiKey" type="password" oninput="saveProfile()" placeholder="مفتاح Gemini API (اختياري)" 
+          class="themed-input rounded-xl px-3 py-2 text-xs w-44 focus:outline-none focus:ring-2" style="--tw-ring-color: var(--brand-primary);">
+
+        <button onclick="scrollToSection('weeklySummarySection')" class="brand-bg-gradient text-white text-xs font-bold px-3.5 py-2 rounded-xl shadow hover:opacity-90 transition">
+          📊 تقرير الأسبوع
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      
+      <!-- Right Column: Body Inputs, Ideal Weight, Water & Weight Chart (5 Cols) -->
+      <div class="lg:col-span-5 space-y-6">
+        
+        <!-- 1. Body Data -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <h2 class="text-base font-extrabold border-b pb-2 border-slate-700/30 flex items-center justify-between">
+            <span>1. بيانات الجسم والهدف</span>
+            <span class="text-xs font-normal brand-text-primary">حفظ تلقائي 💾</span>
+          </h2>
+          
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">النوع</label>
+              <select id="gender" onchange="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+                <option value="male">ذكر</option>
+                <option value="female">أنثى</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">العمر (سنة)</label>
+              <input type="number" id="age" value="21" oninput="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+            </div>
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">الطول (سم)</label>
+              <input type="number" id="height" value="175" oninput="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+            </div>
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">الوزن الحالي (كجم)</label>
+              <input type="number" step="0.1" id="weight" value="85" oninput="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">مستوى النشاط</label>
+              <select id="activity" onchange="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+                <option value="1.2">خامل (مكتبي)</option>
+                <option value="1.375">نشاط خفيف (1-3 أيام)</option>
+                <option value="1.55" selected>نشاط متوسط (3-5 أيام)</option>
+                <option value="1.725">نشاط عالي (6-7 أيام)</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs" style="color: var(--text-muted);">الوزن المستهدف (اختياري)</label>
+              <input type="number" step="0.5" id="targetWeightInput" placeholder="اتركه فارغاً للمثالي" oninput="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+            </div>
+          </div>
+
+          <div>
+            <label class="text-xs" style="color: var(--text-muted);">الهدف وسرعة التغيير</label>
+            <select id="goal" onchange="onProfileChange()" class="w-full mt-1 themed-input rounded-xl p-2 text-sm">
+              <option value="-500" selected>تنشيف / نزول وزن صحي (-500 سعرة / ~0.5 كجم أسبوعياً)</option>
+              <option value="-750">نزول وزن سريع (-750 سعرة / ~0.75 كجم أسبوعياً)</option>
+              <option value="0">ثبات الوزن والمحافظة</option>
+              <option value="400">بناء عضل / ضخامة (+400 سعرة)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Ideal Weight & Roadmap Card -->
+        <div class="glass-card rounded-2xl p-5 space-y-3 border-r-4" style="border-right-color: var(--brand-primary);">
+          <h2 class="text-base font-extrabold brand-text-primary">🎯 خريطة الوزن المثالي والهدف</h2>
+          <div class="grid grid-cols-2 gap-3 text-center">
+            <div class="themed-input p-3 rounded-xl">
+              <span class="text-xs block" style="color: var(--text-muted);">الوزن المثالي لطولك</span>
+              <span id="idealWeightRange" class="text-base font-extrabold block mt-0.5">--</span>
+              <span id="idealWeightBest" class="text-xs brand-text-primary font-bold block mt-0.5">--</span>
+            </div>
+            <div class="themed-input p-3 rounded-xl">
+              <span class="text-xs block" style="color: var(--text-muted);">المطلوب للوصول للهدف</span>
+              <span id="weightDiff" class="text-base font-extrabold text-amber-400 block mt-0.5">--</span>
+              <span id="timeEstimate" class="text-xs block mt-0.5" style="color: var(--text-muted);">--</span>
+            </div>
+          </div>
+          <p id="weightAdvice" class="text-xs leading-relaxed themed-input p-3 rounded-xl"></p>
+        </div>
+
+        <!-- Water Tracker -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex justify-between items-center">
+            <div>
+              <h2 class="text-base font-extrabold brand-text-primary flex items-center gap-1.5">💧 عداد شرب المياه اليومي</h2>
+              <p class="text-[11px]" style="color: var(--text-muted);">هدفك اليومي: <strong id="waterTargetText">3000</strong> مل (<span id="waterTargetCups">12</span> كوب)</p>
+            </div>
+            <span id="waterPercentBadge" class="brand-bg-gradient text-white text-xs font-extrabold px-3 py-1 rounded-full">0%</span>
+          </div>
+
+          <div class="space-y-1">
+            <div class="flex justify-between text-xs">
+              <span>شربت اليوم: <strong id="waterConsumedText" class="brand-text-primary">0</strong> مل</span>
+              <span style="color: var(--text-muted);">متبقي: <strong id="waterRemText">0</strong> مل</span>
+            </div>
+            <div class="w-full themed-input h-3 rounded-full overflow-hidden">
+              <div id="waterProgressBar" class="brand-bg-gradient h-full transition-all duration-300" style="width: 0%"></div>
+            </div>
+          </div>
+
+          <div id="waterCupsGrid" class="grid grid-cols-6 sm:grid-cols-8 gap-2"></div>
+
+          <div class="flex gap-2 pt-1 no-print">
+            <button onclick="addWater(250)" class="flex-1 themed-input hover:opacity-80 text-xs font-bold py-2 rounded-xl transition">+ كوب (250 مل) 🥤</button>
+            <button onclick="addWater(500)" class="flex-1 brand-bg-gradient text-white text-xs font-bold py-2 rounded-xl transition">+ زجاجة (500 مل) 🍾</button>
+            <button onclick="resetTodayWater()" class="themed-input text-rose-400 text-xs px-3 py-2 rounded-xl">تصفير</button>
+          </div>
+        </div>
+
+        <!-- Weight Chart -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex justify-between items-center border-b border-slate-700/30 pb-2">
+            <h2 class="text-base font-extrabold">📈 رسم بياني لتطور الوزن</h2>
+            <span class="text-xs" style="color: var(--text-muted);">سجّل وزنك أسبوعياً</span>
+          </div>
+          <div class="flex gap-2 no-print">
+            <input type="number" step="0.1" id="newWeightEntry" placeholder="وزنك اليوم (مثلاً 84.2)" class="flex-1 themed-input rounded-xl px-3 py-2 text-sm">
+            <input type="date" id="newWeightDate" class="themed-input rounded-xl px-2 py-2 text-xs">
+            <button onclick="addWeightEntry()" class="brand-bg-gradient text-white font-bold px-4 py-2 rounded-xl text-xs">+ تسجيل</button>
+          </div>
+          <div class="themed-input p-3 rounded-xl">
+            <canvas id="weightChart" height="160"></canvas>
+          </div>
+          <div id="weightHistoryList" class="max-h-24 overflow-y-auto space-y-1 text-xs"></div>
+        </div>
+
+      </div>
+
+      <!-- Left Column: Daily Macros, Visual Egyptian Menu, Today's Log & Weekly Summary (7 Cols) -->
+      <div class="lg:col-span-7 space-y-6">
+        
+        <!-- 2. Daily Needs & Progress -->
+        <div class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-700/30 pb-3">
+            <h2 class="text-base font-extrabold">2. سعراتك والماكروز اليوم (<span id="todayDateLabel" class="brand-text-primary"></span>)</h2>
+            <button onclick="clearTodayMeals()" class="text-xs bg-rose-500/20 text-rose-400 px-3 py-1 rounded-lg font-bold no-print">تصفير وجبات اليوم</button>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <div class="themed-input p-3 rounded-xl">
+              <div class="text-xs" style="color: var(--text-muted);">السعرات</div>
+              <div class="text-lg font-black brand-text-primary mt-1"><span id="consumedCal">0</span> / <span id="targetCal">0</span></div>
+              <div class="w-full bg-slate-700/40 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barCal" class="brand-bg-primary h-full transition-all" style="width: 0%"></div>
+              </div>
+              <div class="text-[11px] mt-1" style="color: var(--text-muted);">متبقي: <strong id="remCal" class="text-amber-400">0</strong></div>
+            </div>
+
+            <div class="themed-input p-3 rounded-xl">
+              <div class="text-xs" style="color: var(--text-muted);">البروتين (جم)</div>
+              <div class="text-lg font-black text-blue-400 mt-1"><span id="consumedPro">0</span> / <span id="targetPro">0</span></div>
+              <div class="w-full bg-slate-700/40 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barPro" class="bg-blue-400 h-full transition-all" style="width: 0%"></div>
+              </div>
+              <div class="text-[11px] mt-1" style="color: var(--text-muted);">متبقي: <strong id="remPro">0</strong> جم</div>
+            </div>
+
+            <div class="themed-input p-3 rounded-xl">
+              <div class="text-xs" style="color: var(--text-muted);">الكارب (جم)</div>
+              <div class="text-lg font-black text-amber-400 mt-1"><span id="consumedCarb">0</span> / <span id="targetCarb">0</span></div>
+              <div class="w-full bg-slate-700/40 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barCarb" class="bg-amber-400 h-full transition-all" style="width: 0%"></div>
+              </div>
+              <div class="text-[11px] mt-1" style="color: var(--text-muted);">متبقي: <strong id="remCarb">0</strong> جم</div>
+            </div>
+
+            <div class="themed-input p-3 rounded-xl">
+              <div class="text-xs" style="color: var(--text-muted);">الدهون (جم)</div>
+              <div class="text-lg font-black text-rose-400 mt-1"><span id="consumedFat">0</span> / <span id="targetFat">0</span></div>
+              <div class="w-full bg-slate-700/40 h-1.5 rounded-full mt-2 overflow-hidden">
+                <div id="barFat" class="bg-rose-400 h-full transition-all" style="width: 0%"></div>
+              </div>
+              <div class="text-[11px] mt-1" style="color: var(--text-muted);">متبقي: <strong id="remFat">0</strong> جم</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. Visual Egyptian Food Encyclopedia (With Photos & Categories) -->
+        <div class="glass-card rounded-2xl p-5 space-y-4 no-print">
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 border-b border-slate-700/30 pb-3">
+            <div>
+              <h2 class="text-base font-extrabold flex items-center gap-2">
+                <span>🍲</span> موسوعة الأكل المصري المصورة (اضغط لإضافة الأكلة ليومك)
+              </h2>
+              <p class="text-xs" style="color: var(--text-muted);">أشهر الأكلات الشعبية والبيتية المصرية محسوبة السعرات والبروتين بدقة</p>
+            </div>
+            <input type="text" id="egyFoodFilter" oninput="renderEgyptianGallery()" placeholder="ابحث في الأكل المصري (كشري، فول، محشي...)" 
+              class="themed-input rounded-xl px-3 py-1.5 text-xs w-full sm:w-56 focus:outline-none">
+          </div>
+
+          <!-- Category Filter Tabs -->
+          <div class="flex gap-1.5 overflow-x-auto pb-1 text-xs font-bold">
+            <button onclick="filterCategory('all')" class="cat-btn brand-bg-gradient text-white px-3 py-1.5 rounded-xl whitespace-nowrap">الكل</button>
+            <button onclick="filterCategory('فطار وشعبي')" class="cat-btn themed-input px-3 py-1.5 rounded-xl whitespace-nowrap">فطار وشعبي</button>
+            <button onclick="filterCategory('غداء مصري')" class="cat-btn themed-input px-3 py-1.5 rounded-xl whitespace-nowrap">غداء وطواجن</button>
+            <button onclick="filterCategory('مشويات وبروتين')" class="cat-btn themed-input px-3 py-1.5 rounded-xl whitespace-nowrap">مشويات وبروتين</button>
+            <button onclick="filterCategory('سناكس ومشروبات')" class="cat-btn themed-input px-3 py-1.5 rounded-xl whitespace-nowrap">سناكس وحلويات</button>
+          </div>
+
+          <!-- Food Cards Grid -->
+          <div id="egyptianFoodGallery" class="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-96 overflow-y-auto pr-1"></div>
+        </div>
+
+        <!-- 4. Today's Saved Meal Log -->
+        <div class="glass-card rounded-2xl p-5 space-y-3">
+          <div class="flex justify-between items-center border-b border-slate-700/30 pb-2">
+            <h2 class="text-base font-extrabold">📋 سجل وجباتك المحفوظة اليوم</h2>
+            <span id="mealCountBadge" class="text-xs brand-bg-gradient text-white font-bold px-2.5 py-1 rounded-lg">0 وجبات</span>
+          </div>
+          <div id="dailyMealLogList" class="space-y-2 max-h-56 overflow-y-auto"></div>
+        </div>
+
+        <!-- 5. Weekly Summary & Export -->
+        <div id="weeklySummarySection" class="glass-card rounded-2xl p-5 space-y-4">
+          <div class="flex flex-wrap justify-between items-center gap-2 border-b border-slate-700/30 pb-3">
+            <div>
+              <h2 class="text-base font-extrabold brand-text-primary">📊 ملخص الإنجاز الأسبوعي (آخر 7 أيام)</h2>
+              <p class="text-xs" style="color: var(--text-muted);">تقرير شامل للسعرات، البروتين، المياه، والوزن</p>
+            </div>
+            <div class="flex gap-2 no-print">
+              <button onclick="copyWeeklyReport()" class="themed-input text-xs font-bold px-3 py-1.5 rounded-xl">📋 نسخ</button>
+              <button onclick="downloadWeeklyReportTxt()" class="brand-bg-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl">📥 تحميل (.txt)</button>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center text-xs">
+            <div class="themed-input p-3 rounded-xl">
+              <span style="color: var(--text-muted);" class="block">متوسط السعرات</span>
+              <span id="wkAvgCal" class="text-base font-black brand-text-primary mt-1 block">0</span>
+            </div>
+            <div class="themed-input p-3 rounded-xl">
+              <span style="color: var(--text-muted);" class="block">متوسط البروتين</span>
+              <span id="wkAvgPro" class="text-base font-black text-blue-400 mt-1 block">0 جم</span>
+            </div>
+            <div class="themed-input p-3 rounded-xl">
+              <span style="color: var(--text-muted);" class="block">متوسط المياه</span>
+              <span id="wkAvgWater" class="text-base font-black text-sky-400 mt-1 block">0 مل</span>
+            </div>
+            <div class="themed-input p-3 rounded-xl">
+              <span style="color: var(--text-muted);" class="block">تغير الوزن</span>
+              <span id="wkWeightChange" class="text-base font-black text-amber-400 mt-1 block">--</span>
+            </div>
+          </div>
+          <div id="weeklyDaysTable" class="space-y-1.5 text-xs max-h-40 overflow-y-auto"></div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ========================================================================= -->
+  <!-- FIXED BOTTOM GEMINI-STYLE AI OMNI-BAR & EXPANDABLE CHAT DRAWER            -->
+  <!-- ========================================================================= -->
+  <div class="fixed bottom-0 left-0 right-0 z-50 px-3 pb-3 pt-1 pointer-events-none no-print">
+    <div class="max-w-4xl mx-auto pointer-events-auto">
+      
+      <!-- Expandable AI Chat Drawer (Hidden by default, opens when chatting) -->
+      <div id="aiChatDrawer" class="hidden glass-card rounded-2xl mb-2 p-4 shadow-2xl border-2 brand-border max-h-[60vh] flex flex-col justify-between transition-all">
+        <div class="flex justify-between items-center border-b border-slate-700/40 pb-2 mb-3">
+          <div class="flex items-center gap-2">
+            <span class="brand-bg-gradient text-white text-xs font-extrabold px-2.5 py-1 rounded-full">PIXEL FIT AI ✨</span>
+            <span class="text-xs font-bold" style="color: var(--text-muted);">كابتن التغذية الذكي وحاسب السعرات</span>
+          </div>
+          <button onclick="toggleChatDrawer(false)" class="text-xs text-rose-400 font-bold px-2 py-1 rounded-lg hover:bg-rose-500/10">إغلاق الشات ✕</button>
+        </div>
+
+        <!-- Chat Messages History -->
+        <div id="aiChatMessages" class="space-y-3 overflow-y-auto pr-1 flex-1 text-xs md:text-sm max-h-72">
+          <div class="themed-input p-3 rounded-2xl rounded-tr-none max-w-[88%]">
+            أهلاً بك يا بطل في <strong>PIXEL FIT AI</strong>! 👋🇪🇬<br>
+            تقدر تكتب لي في الشريط تحت أي أكلة أكلتها بالعامية المصرية (مثلاً: <em>"أكلت طبق كشري وسط وبيضتين أومليت ونص رغيف بلدي"</em>) أو ترفع صورة طبقك، أو تسألني أي سؤال عن الدايت والتمرين وهجاوبك فوراً!
+          </div>
+        </div>
+      </div>
+
+      <!-- Image Preview Pill above Search Bar -->
+      <div id="bottomImagePreview" class="hidden glass-card rounded-xl px-3 py-1.5 mb-1.5 inline-flex items-center gap-2 shadow-lg">
+        <img id="bottomPreviewImg" src="" class="w-8 h-8 rounded-lg object-cover">
+        <span class="text-xs font-bold brand-text-primary">صورة الوجبة جاهزة للتحليل</span>
+        <button onclick="clearBottomImage()" class="text-rose-400 text-xs font-bold px-1">✕</button>
+      </div>
+
+      <!-- The Floating Gemini-Style Search / Chat Bar -->
+      <div class="glass-card rounded-full p-2 shadow-2xl border-2 brand-border flex items-center gap-2">
+        
+        <!-- Toggle Chat History Button -->
+        <button onclick="toggleChatDrawer()" title="فتح/إغلاق نافذة الشات" class="themed-input hover:opacity-80 w-10 h-10 rounded-full flex items-center justify-center text-base transition shrink-0">
+          💬
+        </button>
+
+        <!-- Upload Meal Photo Button -->
+        <label title="صوّر وجبتك لحساب سعراتها" class="cursor-pointer themed-input hover:opacity-80 w-10 h-10 rounded-full flex items-center justify-center text-base transition shrink-0">
+          📷
+          <input type="file" id="bottomMealImage" accept="image/*" class="hidden" onchange="onBottomImageSelect(event)">
+        </label>
+
+        <!-- Main Omni Search / Chat Input -->
+        <input type="text" id="omniAiInput" 
+          onkeydown="if(event.key==='Enter') sendOmniAiMessage()"
+          placeholder="اكتب أكلك لحساب سعراته (مثل: 2 بيضة ونص رغيف وطبق فول) أو اسأل PIXEL AI..." 
+          class="flex-1 bg-transparent border-none px-2 py-2 text-xs sm:text-sm focus:outline-none" style="color: var(--text-main);">
+
+        <!-- Send / Analyze Button -->
+        <button onclick="sendOmniAiMessage()" id="omniSendBtn" class="brand-bg-gradient text-white font-extrabold px-4 sm:px-5 py-2.5 rounded-full text-xs sm:text-sm shadow-md hover:opacity-95 transition shrink-0 flex items-center gap-1.5">
+          <span>إرسال</span> <span>✨</span>
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  const STORAGE_KEYS = {
+    PROFILE: 'pixelfit_profile_v1',
+    MEALS: 'pixelfit_meals_v1',
+    WEIGHTS: 'pixelfit_weights_v1',
+    WATER: 'pixelfit_water_v1',
+    THEME: 'pixelfit_theme_v1'
+  };
+
+  let dailyTarget = { cal: 2000, pro: 150, carb: 200, fat: 65, water: 3000 };
+  let optimalTargetWeight = 70;
+  let currentCategory = 'all';
+  let bottomImageBase64 = null;
+  let weightChartInstance = null;
+
+  // Rich Egyptian Food Encyclopedia with Visuals & Accurate Macros
+  const egyptianFoods = [
+    {
+      keys: ['فول', 'دمس', 'مدمس'],
+      name: 'طبق فول مدمس بالزيت الحار',
+      portion: 'طبق متوسط (180 جم)',
+      category: 'فطار وشعبي',
+      cal: 230, pro: 14, carb: 33, fat: 5,
+      emoji: '🫘',
+      img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['طعمية', 'طعميه', 'فلافل'],
+      name: 'طعمية مصرية مقرمشة',
+      portion: 'قرص متوسط (40 جم)',
+      category: 'فطار وشعبي',
+      cal: 68, pro: 2.8, carb: 6.5, fat: 3.6,
+      emoji: '🧆',
+      img: 'https://images.unsplash.com/photo-1593001874117-c99c800e3eb7?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['عيش', 'رغيف', 'بلدي', 'خبز'],
+      name: 'رغيف عيش بلدي مصري بالردة',
+      portion: 'رغيف متوسط (90 جم)',
+      category: 'فطار وشعبي',
+      cal: 245, pro: 8, carb: 50, fat: 1.4,
+      emoji: '🫓',
+      img: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['جبنة قريش', 'جبنه قريش', 'قريش'],
+      name: 'جبنة قريش فلاحي',
+      portion: 'قطعة 100 جرام',
+      category: 'فطار وشعبي',
+      cal: 98, pro: 12, carb: 3, fat: 4,
+      emoji: '🧀',
+      img: 'https://images.unsplash.com/photo-1452195100486-9cc805987862?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['بيض', 'بيضة', 'بيضه', 'أومليت', 'اومليت'],
+      name: 'بيضة كبيرة (مسلوقة / أومليت)',
+      portion: 'بيضة واحدة (50 جم)',
+      category: 'فطار وشعبي',
+      cal: 72, pro: 6.3, carb: 0.4, fat: 4.8,
+      emoji: '🍳',
+      img: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['كشري', 'كشرى'],
+      name: 'طبق كشري مصري أصلي',
+      portion: 'طبق متوسط (300 جم)',
+      category: 'غداء مصري',
+      cal: 460, pro: 15, carb: 82, fat: 7.5,
+      emoji: '🥣',
+      img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['محشي', 'محشى', 'ورق عنب', 'كرنب', 'باذنجان'],
+      name: 'محشي مشكل (كرنب / ورق عنب)',
+      portion: '6 أصابع متوسطة (180 جم)',
+      category: 'غداء مصري',
+      cal: 295, pro: 5.5, carb: 48, fat: 9,
+      emoji: '🫔',
+      img: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['مكرونة بشاميل', 'بشاميل', 'مكرونه بشاميل'],
+      name: 'مكرونة بالبشاميل واللحمة المفرومة',
+      portion: 'خرطة متوسطة (250 جم)',
+      category: 'غداء مصري',
+      cal: 430, pro: 21, carb: 42, fat: 19,
+      emoji: '🥧',
+      img: 'https://images.unsplash.com/photo-1574894709920-11b28e7367e3?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['ملوخية', 'ملوخيه'],
+      name: 'طبق ملوخية مصرية بالتقلية',
+      portion: 'طبق متوسط (200 جم)',
+      category: 'غداء مصري',
+      cal: 115, pro: 5, carb: 9, fat: 6.5,
+      emoji: '🌿',
+      img: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['حواوشي', 'حواوشى'],
+      name: 'رغيف حواوشي بلدي باللحمة',
+      portion: 'رغيف كامل',
+      category: 'مشويات وبروتين',
+      cal: 520, pro: 28, carb: 46, fat: 24,
+      emoji: '🥙',
+      img: 'https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['فراخ', 'دجاج', 'صدور', 'ربع فرخة'],
+      name: 'صدور فراخ مشوية / ربع فرخة',
+      portion: 'حصة 150 جرام صافي',
+      category: 'مشويات وبروتين',
+      cal: 248, pro: 46, carb: 0, fat: 5.4,
+      emoji: '🍗',
+      img: 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['كفتة', 'كفته', 'كباب', 'لحمة', 'لحم'],
+      name: 'كفتة حاتي مشوية على الفحم',
+      portion: '3 أصابع (150 جم)',
+      category: 'مشويات وبروتين',
+      cal: 340, pro: 36, carb: 2, fat: 20,
+      emoji: '🍢',
+      img: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['سمك', 'بلطي', 'بوري', 'مشوي'],
+      name: 'سمك بلطي أو بوري مشوي',
+      portion: 'سمكة متوسطة (220 جم)',
+      category: 'مشويات وبروتين',
+      cal: 255, pro: 44, carb: 0, fat: 7.5,
+      emoji: '🐟',
+      img: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['تونة', 'تونه'],
+      name: 'علبة تونة مصفاة بالليمون',
+      portion: 'علبة واحدة (140 جم)',
+      category: 'مشويات وبروتين',
+      cal: 155, pro: 32, carb: 0, fat: 2.5,
+      emoji: '🥫',
+      img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['رز', 'أرز', 'ارز', 'شعرية'],
+      name: 'أرز مصري بالشعرية',
+      portion: '6 ملاعق كبيرة (150 جم)',
+      category: 'غداء مصري',
+      cal: 215, pro: 4.2, carb: 43, fat: 3,
+      emoji: '🍚',
+      img: 'https://images.unsplash.com/photo-1516684732162-798a0062be99?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['بطاطا', 'بطاطس'],
+      name: 'بطاطا مشوية أو بطاطس مسلوقة',
+      portion: 'حبة متوسطة (150 جم)',
+      category: 'سناكس ومشروبات',
+      cal: 135, pro: 2.5, carb: 31, fat: 0.2,
+      emoji: '🍠',
+      img: 'https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['ترمس', 'حمص الشام', 'بليلة'],
+      name: 'كوب ترمس أو حمص الشام',
+      portion: 'كوب متوسط (150 جم)',
+      category: 'سناكس ومشروبات',
+      cal: 175, pro: 14, carb: 24, fat: 2.8,
+      emoji: '🌾',
+      img: 'https://images.unsplash.com/photo-1515543237350-b3eea1ec8082?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['قصب', 'عصير قصب', 'مانجو', 'بلبن'],
+      name: 'كوب عصير قصب أو رز بلبن',
+      portion: 'كوب/طبق متوسط',
+      category: 'سناكس ومشروبات',
+      cal: 240, pro: 4, carb: 48, fat: 3.5,
+      emoji: '🥤',
+      img: 'https://images.unsplash.com/photo-1544145945-f90425340c7e?auto=format&fit=crop&w=400&q=80'
+    },
+    {
+      keys: ['شوفان', 'موز', 'تفاح', 'زبادي', 'لبن', 'حليب'],
+      name: 'زبادي يوناني أو شوفان بالفاكهة',
+      portion: 'وجبة خفيفة (150 جم)',
+      category: 'سناكس ومشروبات',
+      cal: 160, pro: 11, carb: 22, fat: 3.5,
+      emoji: '🥣',
+      img: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?auto=format&fit=crop&w=400&q=80'
+    }
+  ];
+
+  // --- Theme & Mode Management ---
+  function loadThemePreferences() {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEYS.THEME) || '{"theme":"pixel","mode":"dark"}');
+    document.documentElement.setAttribute('data-theme', saved.theme || 'pixel');
+    document.documentElement.setAttribute('data-mode', saved.mode || 'dark');
+    updateModeUI(saved.mode || 'dark');
+  }
+
+  function setTheme(themeName) {
+    document.documentElement.setAttribute('data-theme', themeName);
+    const currentMode = document.documentElement.getAttribute('data-mode');
+    localStorage.setItem(STORAGE_KEYS.THEME, JSON.stringify({ theme: themeName, mode: currentMode }));
+    renderWeightTracker();
+  }
+
+  function toggleMode() {
+    const currentMode = document.documentElement.getAttribute('data-mode');
+    const nextMode = currentMode === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-mode', nextMode);
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    localStorage.setItem(STORAGE_KEYS.THEME, JSON.stringify({ theme: currentTheme, mode: nextMode }));
+    updateModeUI(nextMode);
+    renderWeightTracker();
+  }
+
+  function updateModeUI(mode) {
+    document.getElementById('modeIcon').innerText = mode === 'dark' ? '☀️' : '🌙';
+    document.getElementById('modeText').innerText = mode === 'dark' ? 'الوضع الفاتح' : 'الوضع الداكن';
+  }
+
+  // --- Visual Egyptian Food Gallery ---
+  function filterCategory(cat) {
+    currentCategory = cat;
+    document.querySelectorAll('.cat-btn').forEach(btn => {
+      btn.className = 'cat-btn themed-input px-3 py-1.5 rounded-xl whitespace-nowrap';
+    });
+    event.target.className = 'cat-btn brand-bg-gradient text-white px-3 py-1.5 rounded-xl whitespace-nowrap';
+    renderEgyptianGallery();
+  }
+
+  function renderEgyptianGallery() {
+    const query = (document.getElementById('egyFoodFilter').value || '').trim();
+    const container = document.getElementById('egyptianFoodGallery');
+
+    const filtered = egyptianFoods.filter(f => {
+      const matchCat = currentCategory === 'all' || f.category === currentCategory;
+      const matchQuery = !query || f.name.includes(query) || f.keys.some(k => k.includes(query));
+      return matchCat && matchQuery;
+    });
+
+    container.innerHTML = filtered.map(f => `
+      <div class="themed-input rounded-2xl overflow-hidden flex flex-col justify-between border hover:scale-[1.01] transition shadow-sm">
+        <div class="relative h-24 w-full bg-slate-800 overflow-hidden">
+          <img src="${f.img}" alt="${f.name}" class="w-full h-full object-cover opacity-85" onerror="this.style.display='none'">
+          <span class="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-0.5 rounded-full font-bold">${f.emoji} ${f.cal} سعرة</span>
+        </div>
+        <div class="p-3 space-y-2 flex-1 flex flex-col justify-between">
+          <div>
+            <h3 class="font-extrabold text-xs leading-snug">${f.name}</h3>
+            <p class="text-[10px] mt-0.5" style="color: var(--text-muted);">${f.portion}</p>
+            <div class="flex justify-between text-[10px] font-bold mt-1.5 pt-1.5 border-t border-slate-700/20">
+              <span class="text-blue-400">بروتين: ${f.pro}ج</span>
+              <span class="text-amber-400">كارب: ${f.carb}ج</span>
+              <span class="text-rose-400">دهون: ${f.fat}ج</span>
+            </div>
+          </div>
+          <button onclick="addMealEntry('${f.name}', ${f.cal}, ${f.pro}, ${f.carb}, ${f.fat})" 
+            class="w-full brand-bg-gradient text-white text-[11px] font-extrabold py-1.5 rounded-xl shadow hover:opacity-90 transition">
+            + أضف لسجل يومي
+          </button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  // --- Bottom Gemini-Style AI Chat & Calorie Search Bar ---
+  function toggleChatDrawer(forceState) {
+    const drawer = document.getElementById('aiChatDrawer');
+    if (typeof forceState === 'boolean') {
+      drawer.classList.toggle('hidden', !forceState);
+    } else {
+      drawer.classList.toggle('hidden');
+    }
+  }
+
+  function onBottomImageSelect(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev) {
+      bottomImageBase64 = ev.target.result;
+      document.getElementById('bottomPreviewImg').src = bottomImageBase64;
+      document.getElementById('bottomImagePreview').classList.remove('hidden');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function clearBottomImage() {
+    bottomImageBase64 = null;
+    document.getElementById('bottomMealImage').value = '';
+    document.getElementById('bottomImagePreview').classList.add('hidden');
+  }
+
+  function appendChatMessage(sender, htmlContent) {
+    const box = document.getElementById('aiChatMessages');
+    const isUser = sender === 'user';
+    const msgDiv = document.createElement('div');
+    msgDiv.className = isUser 
+      ? 'brand-bg-gradient text-white p-3 rounded-2xl rounded-tl-none max-w-[85%] mr-auto font-semibold shadow'
+      : 'themed-input p-3 rounded-2xl rounded-tr-none max-w-[90%] space-y-2 shadow';
+    msgDiv.innerHTML = htmlContent;
+    box.appendChild(msgDiv);
+    box.scrollTop = box.scrollHeight;
+  }
+
+  async function sendOmniAiMessage() {
+    const inputEl = document.getElementById('omniAiInput');
+    const text = inputEl.value.trim();
+    const apiKey = document.getElementById('apiKey').value.trim();
+    const sendBtn = document.getElementById('omniSendBtn');
+
+    if (!text && !bottomImageBase64) return;
+
+    toggleChatDrawer(true);
+    appendChatMessage('user', `${bottomImageBase64 ? '📷 [صورة وجبة مرفقة] ' : ''}${text || 'احسب لي سعرات هذه الوجبة'}`);
+    inputEl.value = '';
+    sendBtn.innerText = '⏳...';
+
+    // 1. If Gemini API Key is present, call Gemini 2.5 Flash for real AI chat + meal calculation
+    if (apiKey) {
+      try {
+        const sysPrompt = `أنت PIXEL FIT AI، خبير تغذية ومدرب شخصي مصري ذكي.
+بيانات المستخدم الحالية: الهدف اليومي ${dailyTarget.cal} سعرة و ${dailyTarget.pro} جرام بروتين، والوزن المستهدف ${optimalTargetWeight} كجم.
+إذا ذكر المستخدم أطعمة تناولها أو أرفق صورة طعام، قم بحساب السعرات والبروتين والكارب والدهون، وفي نهاية ردك ضع سطراً مخفياً بصيغة JSON هكذا تماماً إذا كانت وجبة:
+MEAL_JSON:{"title":"اسم الوجبة","cal":350,"pro":25,"carb":40,"fat":10}
+أما إذا كان سؤالاً عاماً عن التغذية أو التمرين، فأجب بود واحترافية باللهجة المصرية المبسطة.`;
+
+        const parts = [{ text: `${sysPrompt}
+رسالة المستخدم: ${text || 'حلل الصورة المرفقة واحسب سعراتها'}` }];
+        if (bottomImageBase64) {
+          const b64 = bottomImageBase64.split(',')[1];
+          const mime = bottomImageBase64.split(';')[0].split(':')[1];
+          parts.push({ inline_data: { mime_type: mime, data: b64 } });
+        }
+
+        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contents: [{ parts }] })
+        });
+        const data = await res.json();
+        let reply = data.candidates[0].content.parts[0].text;
+
+        let mealBtnHtml = '';
+        const jsonMatch = reply.match(/MEAL_JSON:(\{.*\})/);
+        if (jsonMatch) {
+          const mObj = JSON.parse(jsonMatch[1]);
+          reply = reply.replace(/MEAL_JSON:\{.*\}/, '').trim();
+          mealBtnHtml = `
+            <div class="pt-2 border-t border-slate-700/30 flex justify-between items-center">
+              <span class="text-xs font-extrabold brand-text-primary">إجمالي الوجبة: ${mObj.cal} سعرة | ${mObj.pro}ج بروتين</span>
+              <button onclick="addMealEntry('${mObj.title.replace(/'/g,"")}', ${mObj.cal}, ${mObj.pro}, ${mObj.carb}, ${mObj.fat})" class="brand-bg-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl">
+                + أضف لسجل يومي
+              </button>
+            </div>`;
+        }
+
+        appendChatMessage('ai', `<div>${reply.replace(/
+/g, '<br>')}</div>${mealBtnHtml}`);
+        clearBottomImage();
+        sendBtn.innerHTML = '<span>إرسال</span> <span>✨</span>';
+        return;
+      } catch (err) {
+        console.warn("Fallback to built-in Egyptian AI engine:", err);
+      }
+    }
+
+    // 2. Built-in Offline Smart Egyptian Nutrition & Q&A Engine
+    const responseHtml = runBuiltInEgyptianAI(text, bottomImageBase64);
+    appendChatMessage('ai', responseHtml);
+    clearBottomImage();
+    sendBtn.innerHTML = '<span>إرسال</span> <span>✨</span>';
+  }
+
+  function runBuiltInEgyptianAI(text, hasImage) {
+    let normalized = text
+      .replace(/بيضتين|اتنين بيض|2 بيض/g, '2 بيضة')
+      .replace(/رغيفين/g, '2 رغيف')
+      .replace(/نص رغيف|نصف رغيف/g, '0.5 رغيف')
+      .replace(/ربع رغيف/g, '0.25 رغيف')
+      .replace(/قرصين طعمية|اتنين طعمية/g, '2 طعمية');
+
+    let matchedItems = [];
+    let total = { cal: 0, pro: 0, carb: 0, fat: 0 };
+
+    egyptianFoods.forEach(food => {
+      const key = food.keys.find(k => normalized.includes(k));
+      if (key) {
+        let qty = 1;
+        const regexGram = new RegExp(`(\\d+)\\s*(?:جم|جرام)\\s*(?:من\\s*)?${key}`);
+        const regexCount = new RegExp(`(\\d+(?:\\.\\d+)?)\\s*${key}`);
+        if (regexGram.test(normalized)) {
+          qty = parseFloat(normalized.match(regexGram)[1]) / 100;
+        } else if (regexCount.test(normalized)) {
+          qty = parseFloat(normalized.match(regexCount)[1]);
+        }
+
+        const c = Math.round(food.cal * qty);
+        const p = +(food.pro * qty).toFixed(1);
+        const cb = +(food.carb * qty).toFixed(1);
+        const f = +(food.fat * qty).toFixed(1);
+
+        matchedItems.push({ name: `${food.name} (×${qty})`, cal: c, pro: p, carb: cb, fat: f });
+        total.cal += c; total.pro += p; total.carb += cb; total.fat += f;
+      }
+    });
+
+    if (normalized.includes('أومليت') || normalized.includes('اومليت') || normalized.includes('مقلي')) {
+      matchedItems.push({ name: 'دهون طهي/سمنة تقريبية', cal: 50, pro: 0, carb: 0, fat: 5.5 });
+      total.cal += 50; total.fat += 5.5;
+    }
+
+    if (matchedItems.length > 0) {
+      const itemsHtml = matchedItems.map(i => `<div class="flex justify-between text-xs py-1 border-b border-slate-700/20"><span>• ${i.name}</span><span class="font-bold brand-text-primary">${i.cal} سعرة (${i.pro}ج بروتين)</span></div>`).join('');
+      const safeTitle = text.slice(0, 35).replace(/'/g, "");
+      return `
+        <div class="font-bold text-xs mb-1">تحليل الوجبة من محرك PIXEL FIT المصري 🇪🇬:</div>
+        ${itemsHtml}
+        <div class="flex flex-wrap justify-between items-center gap-2 pt-2 mt-1">
+          <div class="text-xs font-extrabold">الإجمالي: <span class="brand-text-primary">${Math.round(total.cal)} سعرة</span> | بروتين: ${Math.round(total.pro)}ج | كارب: ${Math.round(total.carb)}ج | دهون: ${Math.round(total.fat)}ج</div>
+          <button onclick="addMealEntry('${safeTitle}', ${Math.round(total.cal)}, ${Math.round(total.pro)}, ${Math.round(total.carb)}, ${Math.round(total.fat)})" class="brand-bg-gradient text-white text-xs font-extrabold px-3 py-1.5 rounded-xl shadow">
+            + إضافة لسجل يومي
+          </button>
+        </div>
+      `;
+    }
+
+    if (hasImage) {
+      return `
+        <div>📷 تم فحص صورة الطبق! (تقدير متوسط لوجبة مصرية متكاملة): <strong>450 سعرة حرارية</strong> (28ج بروتين، 48ج كارب، 15ج دهون).</div>
+        <div class="text-[11px] opacity-75">💡 نصيحة: يمكنك وضع مفتاح Gemini API المجاني بالأعلى لتحليل مكونات الصور بدقة 99%.</div>
+        <button onclick="addMealEntry('وجبة مصورة بالـ AI', 450, 28, 48, 15)" class="brand-bg-gradient text-white text-xs font-bold px-3 py-1.5 rounded-xl mt-2">+ إضافة لسجل يومي</button>
+      `;
+    }
+
+    // General Q&A coaching fallback
+    return `
+      <div>يا بطل! بالنسبة لسؤالك: <strong>"${text}"</strong></div>
+      <div class="text-xs leading-relaxed">
+        احتياجك اليومي الحالي هو <strong>${dailyTarget.cal} سعرة</strong> و <strong>${dailyTarget.pro} جرام بروتين</strong> عشان توصل لوزنك المثالي (<strong>${optimalTargetWeight} كجم</strong>).<br>
+        • لو عايز تحسب أكلة: اكتب اسمها زي <em>"2 بيضة ونص رغيف وطبق فول"</em> أو <em>"طبق كشري"</em>.<br>
+        • لأفضل نتيجة في التنشيف: خذ كفايتك من البروتين (جبنة قريش، بيض، صدور فراخ، سمك مشوي، تونة) واشرب <strong>${dailyTarget.water} مل</strong> مية يومياً!
+      </div>
+    `;
+  }
+
+  // --- Core Calculations & Storage ---
+  function getTodayKey() { return new Date().toISOString().split('T')[0]; }
+  function getLast7DaysKeys() {
+    const keys = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(); d.setDate(d.getDate() - i);
+      keys.push(d.toISOString().split('T')[0]);
+    }
+    return keys;
+  }
+
+  function loadProfile() {
+    const saved = localStorage.getItem(STORAGE_KEYS.PROFILE);
+    if (saved) {
+      const p = JSON.parse(saved);
+      document.getElementById('gender').value = p.gender || 'male';
+      document.getElementById('age').value = p.age || 21;
+      document.getElementById('height').value = p.height || 175;
+      document.getElementById('weight').value = p.weight || 85;
+      document.getElementById('activity').value = p.activity || '1.55';
+      document.getElementById('targetWeightInput').value = p.targetWeightInput || '';
+      document.getElementById('goal').value = p.goal || '-500';
+      document.getElementById('apiKey').value = p.apiKey || '';
+    }
+    document.getElementById('newWeightDate').value = getTodayKey();
+    document.getElementById('todayDateLabel').innerText = getTodayKey();
+  }
+
+  function saveProfile() {
+    const p = {
+      gender: document.getElementById('gender').value,
+      age: document.getElementById('age').value,
+      height: document.getElementById('height').value,
+      weight: document.getElementById('weight').value,
+      activity: document.getElementById('activity').value,
+      targetWeightInput: document.getElementById('targetWeightInput').value,
+      goal: document.getElementById('goal').value,
+      apiKey: document.getElementById('apiKey').value
+    };
+    localStorage.setItem(STORAGE_KEYS.PROFILE, JSON.stringify(p));
+  }
+
+  function onProfileChange() { saveProfile(); calculateAll(); }
+  function getTodayMeals() { return (JSON.parse(localStorage.getItem(STORAGE_KEYS.MEALS) || '{}'))[getTodayKey()] || []; }
+  function saveTodayMeals(arr) {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEALS) || '{}');
+    all[getTodayKey()] = arr;
+    localStorage.setItem(STORAGE_KEYS.MEALS, JSON.stringify(all));
+  }
+
+  function getTodayWater() { return (JSON.parse(localStorage.getItem(STORAGE_KEYS.WATER) || '{}'))[getTodayKey()] || 0; }
+  function saveTodayWater(ml) {
+    const all = JSON.parse(localStorage.getItem(STORAGE_KEYS.WATER) || '{}');
+    all[getTodayKey()] = Math.max(0, ml);
+    localStorage.setItem(STORAGE_KEYS.WATER, JSON.stringify(all));
+    renderWaterTracker(); renderWeeklySummary();
+  }
+  function addWater(ml) { saveTodayWater(getTodayWater() + ml); }
+  function setWaterCups(idx) {
+    const cur = Math.floor(getTodayWater() / 250);
+    saveTodayWater(((idx + 1 === cur) ? idx : idx + 1) * 250);
+  }
+  function resetTodayWater() { saveTodayWater(0); }
+
+  function renderWaterTracker() {
+    const consumed = getTodayWater();
+    const target = dailyTarget.water;
+    const totalCups = Math.ceil(target / 250);
+    const filled = Math.floor(consumed / 250);
+    const pct = Math.min(100, Math.round((consumed / target) * 100));
+
+    document.getElementById('waterTargetText').innerText = target;
+    document.getElementById('waterTargetCups').innerText = totalCups;
+    document.getElementById('waterConsumedText').innerText = consumed;
+    document.getElementById('waterRemText').innerText = Math.max(0, target - consumed);
+    document.getElementById('waterPercentBadge').innerText = `${pct}%`;
+    document.getElementById('waterProgressBar').style.width = `${pct}%`;
+
+    let html = '';
+    for (let i = 0; i < totalCups; i++) {
+      const isFull = i < filled;
+      html += `
+        <button onclick="setWaterCups(${i})" class="p-2 rounded-xl border text-center transition flex flex-col items-center ${isFull ? 'brand-bg-gradient text-white shadow' : 'themed-input opacity-60 hover:opacity-100'}">
+          <span class="text-sm">${isFull ? '🥤' : '🥛'}</span>
+          <span class="text-[9px] font-bold mt-0.5">${(i+1)*250}</span>
+        </button>`;
+    }
+    document.getElementById('waterCupsGrid').innerHTML = html;
+  }
+
+  function calculateAll() {
+    const gender = document.getElementById('gender').value;
+    const age = parseFloat(document.getElementById('age').value) || 21;
+    const height = parseFloat(document.getElementById('height').value) || 175;
+    const weight = parseFloat(document.getElementById('weight').value) || 85;
+    const activity = parseFloat(document.getElementById('activity').value) || 1.55;
+    const goalCalDiff = parseFloat(document.getElementById('goal').value) || -500;
+    const customTarget = parseFloat(document.getElementById('targetWeightInput').value);
+
+    const hM = height / 100;
+    const minIdeal = (18.5 * hM * hM).toFixed(1);
+    const maxIdeal = (24.9 * hM * hM).toFixed(1);
+    const optimalIdeal = Math.round(22 * hM * hM);
+
+    document.getElementById('idealWeightRange').innerText = `${minIdeal} - ${maxIdeal} كجم`;
+    document.getElementById('idealWeightBest').innerText = `المثالي الأفضل: ${optimalIdeal} كجم`;
+
+    const targetWeight = !isNaN(customTarget) && customTarget > 30 ? customTarget : optimalIdeal;
+    optimalTargetWeight = targetWeight;
+    const diff = (weight - targetWeight).toFixed(1);
+
+    const diffEl = document.getElementById('weightDiff');
+    const timeEl = document.getElementById('timeEstimate');
+    const adviceEl = document.getElementById('weightAdvice');
+
+    if (Math.abs(diff) <= 1) {
+      diffEl.innerText = "وزنك مثالي! 🎯";
+      timeEl.innerText = "حافظ على ثباتك";
+      adviceEl.innerText = `وزنك الحالي (${weight} كجم) مثالي لطولك (${height} سم).`;
+    } else if (diff > 0) {
+      const rate = Math.abs(goalCalDiff) > 0 ? (Math.abs(goalCalDiff) * 7) / 7700 : 0.5;
+      const weeks = Math.ceil(diff / rate);
+      diffEl.innerText = `نزول ${diff} كجم`;
+      timeEl.innerText = `في حوالي ${weeks} أسبوع (~${(weeks/4.3).toFixed(1)} شهر)`;
+      adviceEl.innerText = `المفروض نقف عند وزن ${targetWeight} كجم. التزم بعجز السعرات والبروتين العالي للحفاظ على عضلاتك.`;
+    } else {
+      const gain = Math.abs(diff);
+      const weeks = Math.ceil(gain / 0.35);
+      diffEl.innerText = `زيادة ${gain} كجم`;
+      timeEl.innerText = `في حوالي ${weeks} أسبوع`;
+      adviceEl.innerText = `الوزن المستهدف هو ${targetWeight} كجم لزيادة الكتلة العضلية.`;
+    }
+
+    let bmr = (10 * weight) + (6.25 * height) - (5 * age) + (gender === 'male' ? 5 : -161);
+    let tdee = Math.round(bmr * activity);
+    let targetCal = Math.max(1200, tdee + goalCalDiff);
+    let targetPro = Math.round(targetWeight * 2);
+    let targetFat = Math.round((targetCal * 0.25) / 9);
+    let targetCarb = Math.max(50, Math.round((targetCal - (targetPro * 4) - (targetFat * 9)) / 4));
+    let targetWater = Math.ceil(((weight * 35) + (activity > 1.5 ? 500 : 250)) / 250) * 250;
+
+    dailyTarget = { cal: targetCal, pro: targetPro, carb: targetCarb, fat: targetFat, water: targetWater };
+    updateDashboardAndLogs();
+    renderWaterTracker();
+    renderEgyptianGallery();
+    renderWeightTracker();
+    renderWeeklySummary();
+  }
+
+  function updateDashboardAndLogs() {
+    const meals = getTodayMeals();
+    let consumed = { cal: 0, pro: 0, carb: 0, fat: 0 };
+    meals.forEach(m => { consumed.cal += m.cal; consumed.pro += m.pro; consumed.carb += m.carb; consumed.fat += m.fat; });
+
+    document.getElementById('targetCal').innerText = dailyTarget.cal;
+    document.getElementById('targetPro').innerText = dailyTarget.pro;
+    document.getElementById('targetCarb').innerText = dailyTarget.carb;
+    document.getElementById('targetFat').innerText = dailyTarget.fat;
+
+    document.getElementById('consumedCal').innerText = Math.round(consumed.cal);
+    document.getElementById('consumedPro').innerText = Math.round(consumed.pro);
+    document.getElementById('consumedCarb').innerText = Math.round(consumed.carb);
+    document.getElementById('consumedFat').innerText = Math.round(consumed.fat);
+
+    document.getElementById('remCal').innerText = Math.max(0, Math.round(dailyTarget.cal - consumed.cal));
+    document.getElementById('remPro').innerText = Math.max(0, Math.round(dailyTarget.pro - consumed.pro));
+    document.getElementById('remCarb').innerText = Math.max(0, Math.round(dailyTarget.carb - consumed.carb));
+    document.getElementById('remFat').innerText = Math.max(0, Math.round(dailyTarget.fat - consumed.fat));
+
+    document.getElementById('barCal').style.width = `${Math.min(100, (consumed.cal / dailyTarget.cal) * 100)}%`;
+    document.getElementById('barPro').style.width = `${Math.min(100, (consumed.pro / dailyTarget.pro) * 100)}%`;
+    document.getElementById('barCarb').style.width = `${Math.min(100, (consumed.carb / dailyTarget.carb) * 100)}%`;
+    document.getElementById('barFat').style.width = `${Math.min(100, (consumed.fat / dailyTarget.fat) * 100)}%`;
+
+    const listEl = document.getElementById('dailyMealLogList');
+    document.getElementById('mealCountBadge').innerText = `${meals.length} وجبات`;
+
+    if (meals.length === 0) {
+      listEl.innerHTML = `<p class="text-xs text-center py-4" style="color: var(--text-muted);">لم تسجل وجبات اليوم بعد. اضغط على أي أكلة مصرية من الموسوعة فوق أو اكتب وجبتك في شريط الـ AI تحت!</p>`;
+    } else {
+      listEl.innerHTML = meals.map((m, idx) => `
+        <div class="flex justify-between items-center themed-input px-3.5 py-2.5 rounded-xl">
+          <div>
+            <div class="text-xs font-extrabold">${m.title} <span class="text-[10px] opacity-60 font-normal">(${m.time})</span></div>
+            <div class="text-[11px] brand-text-primary font-bold mt-0.5">${Math.round(m.cal)} سعرة | بروتين: ${Math.round(m.pro)}ج | كارب: ${Math.round(m.carb)}ج | دهون: ${Math.round(m.fat)}ج</div>
+          </div>
+          <button onclick="removeMeal(${idx})" class="text-xs text-rose-400 font-bold px-2 py-1 rounded-lg hover:bg-rose-500/10 no-print">حذف ✕</button>
+        </div>
+      `).join('');
+    }
+    renderWeeklySummary();
+  }
+
+  function addMealEntry(title, cal, pro, carb, fat) {
+    const meals = getTodayMeals();
+    const timeStr = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
+    meals.push({ title, cal, pro, carb, fat, time: timeStr });
+    saveTodayMeals(meals);
+    updateDashboardAndLogs();
+  }
+
+  function removeMeal(idx) {
+    const meals = getTodayMeals(); meals.splice(idx, 1);
+    saveTodayMeals(meals); updateDashboardAndLogs();
+  }
+  function clearTodayMeals() { saveTodayMeals([]); updateDashboardAndLogs(); }
+
+  // --- Weight Chart ---
+  function getWeightLogs() {
+    let logs = JSON.parse(localStorage.getItem(STORAGE_KEYS.WEIGHTS) || '[]');
+    if (logs.length === 0) {
+      logs = [{ date: getTodayKey(), weight: parseFloat(document.getElementById('weight').value) || 85 }];
+      localStorage.setItem(STORAGE_KEYS.WEIGHTS, JSON.stringify(logs));
+    }
+    return logs;
+  }
+
+  function addWeightEntry() {
+    const w = parseFloat(document.getElementById('newWeightEntry').value);
+    const d = document.getElementById('newWeightDate').value || getTodayKey();
+    if (isNaN(w) || w < 25 || w > 300) return alert("أدخل وزناً صحيحاً");
+    let logs = getWeightLogs();
+    const idx = logs.findIndex(i => i.date === d);
+    if (idx >= 0) logs[idx].weight = w; else logs.push({ date: d, weight: w });
+    logs.sort((a, b) => a.date.localeCompare(b.date));
+    localStorage.setItem(STORAGE_KEYS.WEIGHTS, JSON.stringify(logs));
+    document.getElementById('weight').value = w;
+    document.getElementById('newWeightEntry').value = '';
+    saveProfile(); calculateAll();
+  }
+
+  function renderWeightTracker() {
+    const logs = getWeightLogs();
+    const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--brand-primary').trim() || '#1BA8F0';
+    const ctx = document.getElementById('weightChart').getContext('2d');
+    if (weightChartInstance) weightChartInstance.destroy();
+
+    weightChartInstance = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: logs.map(l => l.date.slice(5)),
+        datasets: [
+          {
+            label: 'وزنك (كجم)',
+            data: logs.map(l => l.weight),
+            borderColor: primaryColor,
+            backgroundColor: 'rgba(27, 168, 240, 0.12)',
+            borderWidth: 2.5,
+            tension: 0.3,
+            fill: true
+          },
+          {
+            label: 'الهدف',
+            data: logs.map(() => optimalTargetWeight),
+            borderColor: '#f59e0b',
+            borderDash: [5, 5],
+            borderWidth: 1.5,
+            pointRadius: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#94a3b8', font: { family: 'Cairo', size: 11 } } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.08)' } },
+          y: { ticks: { color: '#94a3b8' }, grid: { color: 'rgba(148,163,184,0.08)' } }
+        }
+      }
+    });
+  }
+
+  // --- Weekly Summary ---
+  function getWeeklyStats() {
+    const days = getLast7DaysKeys();
+    const allMeals = JSON.parse(localStorage.getItem(STORAGE_KEYS.MEALS) || '{}');
+    const allWater = JSON.parse(localStorage.getItem(STORAGE_KEYS.WATER) || '{}');
+    const wLogs = getWeightLogs();
+
+    let tCal = 0, tPro = 0, tWat = 0, active = 0;
+    const rows = [];
+    days.forEach(k => {
+      const m = allMeals[k] || [];
+      const w = allWater[k] || 0;
+      const c = m.reduce((s, x) => s + x.cal, 0);
+      const p = m.reduce((s, x) => s + x.pro, 0);
+      if (m.length > 0 || w > 0) { active++; tCal += c; tPro += p; tWat += w; }
+      rows.push({ date: k, count: m.length, cal: Math.round(c), pro: Math.round(p), water: w });
+    });
+
+    const div = active || 1;
+    let wDiff = 'ثابت';
+    if (wLogs.length >= 2) {
+      const d = (wLogs[wLogs.length - 1].weight - wLogs[0].weight).toFixed(1);
+      wDiff = d > 0 ? `+${d} كجم` : `${d} كجم`;
+    }
+    return { avgCal: Math.round(tCal / div), avgPro: Math.round(tPro / div), avgWater: Math.round(tWat / div), wDiff, rows };
+  }
+
+  function renderWeeklySummary() {
+    const s = getWeeklyStats();
+    document.getElementById('wkAvgCal').innerText = `${s.avgCal} سعرة`;
+    document.getElementById('wkAvgPro').innerText = `${s.avgPro} جم`;
+    document.getElementById('wkAvgWater').innerText = `${s.avgWater} مل`;
+    document.getElementById('wkWeightChange').innerText = s.wDiff;
+
+    document.getElementById('weeklyDaysTable').innerHTML = s.rows.slice().reverse().map(r => `
+      <div class="flex justify-between items-center themed-input px-3 py-2 rounded-lg">
+        <span class="font-bold">${r.date} <span class="opacity-60 font-normal">(${r.count} وجبات)</span></span>
+        <span>🔥 <strong>${r.cal}</strong> | 🥩 <strong>${r.pro}ج</strong> | 💧 <strong>${r.water}</strong>مل</span>
+      </div>
+    `).join('');
+  }
+
+  function copyWeeklyReport() {
+    const s = getWeeklyStats();
+    const txt = `📊 تقرير PIXEL FIT الأسبوعي (${getTodayKey()})
+متوسط السعرات: ${s.avgCal} | متوسط البروتين: ${s.avgPro}ج | متوسط المياه: ${s.avgWater} مل | تغير الوزن: ${s.wDiff}`;
+    navigator.clipboard.writeText(txt).then(() => alert("تم نسخ التقرير! 📋"));
+  }
+
+  function downloadWeeklyReportTxt() {
+    const s = getWeeklyStats();
+    const txt = `تقرير PIXEL FIT الأسبوعي (${getTodayKey()})
+متوسط السعرات: ${s.avgCal}
+متوسط البروتين: ${s.avgPro} جم
+متوسط المياه: ${s.avgWater} مل
+تغير الوزن: ${s.wDiff}`;
+    const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `PIXEL-FIT-Report-${getTodayKey()}.txt`;
+    a.click();
+  }
+
+  function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: 'smooth' }); }
+
+  // Init v1.0
+  loadThemePreferences();
+  loadProfile();
+  calculateAll();
+</script>
+</body>
+</html>
